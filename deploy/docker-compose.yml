@@ -38,19 +38,19 @@ services:
       timeout: 3s
       retries: 40
 
-  migrator:
-    image: synchit_backend:${SYNCHIT_BACKEND_VERSION:-latest}
-    restart: "no"
-    command: alembic upgrade head
-    environment:
-      SYNCHIT_BACKEND_DB_HOST: synchit_backend-db
-      SYNCHIT_BACKEND_DB_PORT: 5432
-      SYNCHIT_BACKEND_DB_USER: synchit_backend
-      SYNCHIT_BACKEND_DB_PASS: synchit_backend
-      SYNCHIT_BACKEND_DB_BASE: synchit_backend
-    depends_on:
-      db:
-        condition: service_healthy
+  # migrator:
+  #   image: synchit_backend:${SYNCHIT_BACKEND_VERSION:-latest}
+  #   restart: "no"
+  #   command: alembic upgrade head
+  #   environment:
+  #     SYNCHIT_BACKEND_DB_HOST: synchit_backend-db
+  #     SYNCHIT_BACKEND_DB_PORT: 5432
+  #     SYNCHIT_BACKEND_DB_USER: synchit_backend
+  #     SYNCHIT_BACKEND_DB_PASS: synchit_backend
+  #     SYNCHIT_BACKEND_DB_BASE: synchit_backend
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
 
   redis:
     image: bitnami/redis:6.2.5
@@ -63,8 +63,6 @@ services:
       interval: 1s
       timeout: 3s
       retries: 50
-
-
 
 volumes:
   synchit_backend-db-data:

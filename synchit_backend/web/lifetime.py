@@ -4,10 +4,8 @@ from fastapi import FastAPI
 
 from synchit_backend.settings import settings
 from synchit_backend.services.redis.lifetime import init_redis, shutdown_redis
-from asyncio import current_task
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
-    async_scoped_session,
     create_async_engine,
 )
 from sqlalchemy.orm import sessionmaker
@@ -24,13 +22,10 @@ def _setup_db(app: FastAPI) -> None:  # pragma: no cover
     :param app: fastAPI application.
     """
     engine = create_async_engine(str(settings.db_url), echo=settings.db_echo)
-    session_factory = async_scoped_session(
-        sessionmaker(
-            engine,
-            expire_on_commit=False,
-            class_=AsyncSession,
-        ),
-        scopefunc=current_task,
+    session_factory = sessionmaker(
+        engine,
+        expire_on_commit=False,
+        class_=AsyncSession,
     )
     app.state.db_engine = engine
     app.state.db_session_factory = session_factory

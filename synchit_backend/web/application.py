@@ -20,7 +20,6 @@ def get_app() -> FastAPI:
     app = FastAPI(
         title="synchit_backend",
         description="backend for synchit, a group music listening application",
-        version=metadata.version("synchit_backend"),
         docs_url="/api/docs",
         redoc_url="/api/redoc",
         openapi_url="/api/openapi.json",
