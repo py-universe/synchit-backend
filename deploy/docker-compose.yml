@@ -1,0 +1,71 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile
+    image: synchit_backend:${SYNCHIT_BACKEND_VERSION:-latest}
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SYNCHIT_BACKEND_HOST: 0.0.0.0
+      SYNCHIT_BACKEND_DB_HOST: synchit_backend-db
+      SYNCHIT_BACKEND_DB_PORT: 5432
+      SYNCHIT_BACKEND_DB_USER: synchit_backend
+      SYNCHIT_BACKEND_DB_PASS: synchit_backend
+      SYNCHIT_BACKEND_DB_BASE: synchit_backend
+
+  db:
+    image: postgres:13.6-bullseye
+    hostname: synchit_backend-db
+    environment:
+      POSTGRES_PASSWORD: "synchit_backend"
+      POSTGRES_USER: "synchit_backend"
+      POSTGRES_DB: "synchit_backend"
+    volumes:
+      - synchit_backend-db-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U synchit_backend
+      interval: 2s
+      timeout: 3s
+      retries: 40
+
+  migrator:
+    image: synchit_backend:${SYNCHIT_BACKEND_VERSION:-latest}
+    restart: "no"
+    command: alembic upgrade head
+    environment:
+      SYNCHIT_BACKEND_DB_HOST: synchit_backend-db
+      SYNCHIT_BACKEND_DB_PORT: 5432
+      SYNCHIT_BACKEND_DB_USER: synchit_backend
+      SYNCHIT_BACKEND_DB_PASS: synchit_backend
+      SYNCHIT_BACKEND_DB_BASE: synchit_backend
+    depends_on:
+      db:
+        condition: service_healthy
+
+  redis:
+    image: bitnami/redis:6.2.5
+    hostname: "synchit_backend-redis"
+    restart: always
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    healthcheck:
+      test: redis-cli ping
+      interval: 1s
+      timeout: 3s
+      retries: 50
+
+
+
+volumes:
+  synchit_backend-db-data:
+    name: synchit_backend-db-data
