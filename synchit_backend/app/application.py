@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
 import logging
-from synchit_backend.web.api.router import api_router
+from synchit_backend.app.rest_api.router import api_router
 from synchit_backend.settings import settings
-from synchit_backend.web.lifetime import register_startup_event, register_shutdown_event
+from synchit_backend.app.lifetime import register_startup_event, register_shutdown_event
 from importlib import metadata
 from synchit_backend.logging import configure_logging
 

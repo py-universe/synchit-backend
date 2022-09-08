@@ -14,7 +14,7 @@ from redis.asyncio import ConnectionPool
 from synchit_backend.integrations.redis.dependency import get_redis_pool
 
 from synchit_backend.settings import settings
-from synchit_backend.web.application import get_app
+from synchit_backend.app.application import get_app
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncEngine, AsyncConnection
 from sqlalchemy.orm import sessionmaker
 from synchit_backend.db.dependencies import get_db_session

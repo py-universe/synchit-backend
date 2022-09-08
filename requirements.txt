@@ -1,9 +1,9 @@
 fastapi==0.75.0
 uvicorn[standard]==0.17.0
-pydantic[dotenv]==1.9.0
+pydantic[dotenv]
 yarl==1.7.2
 ujson==5.1.0
-SQLAlchemy[mypy, asyncio]==1.4
+SQLAlchemy[mypy, asyncio]
 alembic==1.7.7
 asyncpg[sa]==0.25.0
 redis[hiredis]==4.3.3
@@ -22,4 +22,5 @@ pytest-cov==3.0.0
 anyio==3.6.1
 pytest-env==0.6.2
 fakeredis==1.8.1
-httpx==0.22.0
+httpx
+authx==0.6.0
