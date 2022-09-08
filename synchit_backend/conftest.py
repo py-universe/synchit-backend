@@ -11,7 +11,7 @@ from unittest.mock import Mock
 from fakeredis import FakeServer
 from fakeredis.aioredis import FakeConnection
 from redis.asyncio import ConnectionPool
-from synchit_backend.services.redis.dependency import get_redis_pool
+from synchit_backend.integrations.redis.dependency import get_redis_pool
 
 from synchit_backend.settings import settings
 from synchit_backend.web.application import get_app

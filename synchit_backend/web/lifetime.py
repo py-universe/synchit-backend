@@ -3,7 +3,7 @@ import logging
 from fastapi import FastAPI
 
 from synchit_backend.settings import settings
-from synchit_backend.services.redis.lifetime import init_redis, shutdown_redis
+from synchit_backend.integrations.redis.lifetime import init_redis, shutdown_redis
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     create_async_engine,

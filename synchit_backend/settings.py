@@ -70,6 +70,7 @@ class Settings(BaseSettings):
             password=self.db_pass,
             path=f"/{self.db_base}",
         )
+        
     @property
     def redis_url(self) -> URL:
         """
