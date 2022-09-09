@@ -1,6 +1,7 @@
 from typing import Awaitable, Callable
 import logging
 from fastapi import FastAPI
+from authx import Authentication, BaseDBBackend
 
 from synchit_backend.settings import settings
 from synchit_backend.integrations.redis.lifetime import init_redis, shutdown_redis
@@ -9,6 +10,13 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 from sqlalchemy.orm import sessionmaker
+
+
+def _setup_auth(app: FastAPI) -> None:  # pragma: no cover
+    # Setup auth app
+    auth = Authentication(database_backend=BaseDBBackend())
+
+    app.state.auth = auth
 
 
 def _setup_db(app: FastAPI) -> None:  # pragma: no cover
@@ -27,6 +35,7 @@ def _setup_db(app: FastAPI) -> None:  # pragma: no cover
         expire_on_commit=False,
         class_=AsyncSession,
     )
+
     app.state.db_engine = engine
     app.state.db_session_factory = session_factory
 
@@ -46,6 +55,7 @@ def register_startup_event(app: FastAPI) -> Callable[[], Awaitable[None]]:  # pr
     async def _startup() -> None:  # noqa: WPS430
         _setup_db(app)
         init_redis(app)
+        # _setup_auth(app)
         pass  # noqa: WPS420
 
     return _startup
