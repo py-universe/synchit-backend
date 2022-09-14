@@ -1,43 +1,11 @@
 from typing import Awaitable, Callable
-import logging
 from fastapi import FastAPI
-from authx import Authentication, BaseDBBackend
 
-from synchit_backend.settings import settings
-from synchit_backend.integrations.redis.lifetime import init_redis, shutdown_redis
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-    create_async_engine,
+from synchit_backend.integrations.redis.lifetime import (
+    init_redis, shutdown_redis
 )
-from sqlalchemy.orm import sessionmaker
-
-
-def _setup_auth(app: FastAPI) -> None:  # pragma: no cover
-    # Setup auth app
-    auth = Authentication(database_backend=BaseDBBackend())
-
-    app.state.auth = auth
-
-
-def _setup_db(app: FastAPI) -> None:  # pragma: no cover
-    """
-    Creates connection to the database.
-
-    This function creates SQLAlchemy engine instance,
-    session_factory for creating sessions
-    and stores them in the application's state property.
-
-    :param app: fastAPI application.
-    """
-    engine = create_async_engine(str(settings.db_url), echo=settings.db_echo)
-    session_factory = sessionmaker(
-        engine,
-        expire_on_commit=False,
-        class_=AsyncSession,
-    )
-
-    app.state.db_engine = engine
-    app.state.db_session_factory = session_factory
+from synchit_backend.db.base import Base
+from synchit_backend.db.database import engine
 
 
 def register_startup_event(app: FastAPI) -> Callable[[], Awaitable[None]]:  # pragma: no cover
@@ -53,9 +21,12 @@ def register_startup_event(app: FastAPI) -> Callable[[], Awaitable[None]]:  # pr
 
     @app.on_event("startup")
     async def _startup() -> None:  # noqa: WPS430
-        _setup_db(app)
+        # Create database tables. We are going with this approach
+        # For simplicity and brevity's sake. In a real-world scenario,
+        # We'd be using Alembic to create tables and manage migrations.
+        Base.metadata.create_all(bind=engine)
+
         init_redis(app)
-        # _setup_auth(app)
         pass  # noqa: WPS420
 
     return _startup
@@ -71,8 +42,6 @@ def register_shutdown_event(app: FastAPI) -> Callable[[], Awaitable[None]]:  # p
 
     @app.on_event("shutdown")
     async def _shutdown() -> None:  # noqa: WPS430
-        await app.state.db_engine.dispose()
-        
         await shutdown_redis(app)
         pass  # noqa: WPS420
 

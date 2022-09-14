@@ -1,4 +1,5 @@
 from fastapi.routing import APIRouter
+
 from synchit_backend.app.rest_api import monitoring
 from synchit_backend.app.rest_api import users
 
