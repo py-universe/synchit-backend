@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from synchit_backend.integrations.redis.lifetime import (
     init_redis, shutdown_redis
 )
+from synchit_backend.app.rest_api.users.auth import add_auth
 from synchit_backend.db.base import Base
 from synchit_backend.db.database import engine
 
@@ -21,6 +22,9 @@ def register_startup_event(app: FastAPI) -> Callable[[], Awaitable[None]]:  # pr
 
     @app.on_event("startup")
     async def _startup() -> None:  # noqa: WPS430
+        # Add authentication routes
+        await add_auth(app)
+
         # Create database tables. We are going with this approach
         # For simplicity and brevity's sake. In a real-world scenario,
         # We'd be using Alembic to create tables and manage migrations.
