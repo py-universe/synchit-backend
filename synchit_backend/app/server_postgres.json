@@ -1,9 +1,0 @@
-{
-    "DB_TYPE": "postgres",
-    "DB_NAME": "synchit_backend",
-    "ISSUER": "EasyAuth",
-    "SUBJECT": "EasyAuthAuth",
-    "AUDIENCE": "EasyAuthApis",
-    "KEY_PATH": "~/keys",
-    "KEY_NAME": "test_key"
-}

@@ -23,4 +23,3 @@ anyio==3.6.1
 pytest-env==0.6.2
 fakeredis==1.8.1
 httpx
-easy-auth[server]
