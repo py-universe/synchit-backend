@@ -1,22 +1,30 @@
-from authx.models import user
-from authx.models import social
-
-class Register(user.UserInRegister):
-    pass
+from pydantic import BaseModel
 
 
-class Login(user.UserInLogin):
-    pass
+class BaseAuthInput(BaseModel):
+    email: str
+    password: str
 
 
-class UserUpdate(user.UserInChangeUsername):
-    room_id: str
+class SignupInput(BaseAuthInput):
+    display_name: str
+   
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "sample@sample.com", 
+                "password": "password", 
+                "display_name": "super_x"
+            }
+        }
 
 
-class SocialCreate(social.SocialInCreate):
-    pass
-
-
-class SocialLogin(social.SocialInCreate):
-    pass
+class LoginInput(BaseAuthInput):
+   
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "sample@sample.com", "password": "password"
+            }
+        }
 

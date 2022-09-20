@@ -16,12 +16,14 @@ async def signup(request: Request):
     req = await request.json()
     email = req['email']
     password = req['password']
+    display_name = req['display_name']
     if email is None or password is None:
         return HTTPException(detail={'message': 'Error! Missing Email or Password'}, status_code=400)
     try:
         user = firebase.create_firebase_user(
            email=email,
-           password=password
+           password=password,
+           display_name=display_name
         )
 
         return JSONResponse(content={'message': f'Successfully created user: {user}'}, status_code=200)    
