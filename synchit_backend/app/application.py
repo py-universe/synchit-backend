@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
-import logging
+from fastapi.middleware.cors import CORSMiddleware
+
 from synchit_backend.app.rest_api.router import api_router
-from synchit_backend.settings import settings
 from synchit_backend.app.lifetime import register_startup_event, register_shutdown_event
-from importlib import metadata
 from synchit_backend.logging import configure_logging
 
 
@@ -26,6 +25,15 @@ def get_app() -> FastAPI:
         default_response_class=UJSONResponse,
     )
 
+    allow_all = ['*']
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=allow_all,
+        allow_credentials=True,
+        allow_methods=allow_all,
+        allow_headers=allow_all
+    )
+    
     # Adds startup and shutdown events.
     register_startup_event(app)
     register_shutdown_event(app)

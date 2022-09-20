@@ -1,5 +1,8 @@
 ### Python template
 
+# json files
+*.json
+
 .idea/
 .vscode/
 # Byte-compiled / optimized / DLL files
