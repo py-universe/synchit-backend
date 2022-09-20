@@ -1,49 +1,56 @@
 from fastapi import APIRouter, Request
 from fastapi.exceptions import HTTPException
-from fastapi.responses import JSONResponse
 import uvicorn
 
 from .helpers import firebase
-from . import auth
+from .schemas import input, output
 
 
 auth_router = APIRouter()
 
 
 # signup endpoint
-@auth_router.post("/signup")
-async def signup(request: Request):
-    req = await request.json()
-    email = req['email']
-    password = req['password']
-    display_name = req['display_name']
+@auth_router.post("/signup", response_model=output.SignupOutputModel)
+async def signup(signup_data: input.SignupInputModel):
+    email = signup_data.email
+    password = signup_data.password
+    display_name = signup_data.display_name
+
     if email is None or password is None:
-        return HTTPException(detail={'message': 'Error! Missing Email or Password'}, status_code=400)
+        return HTTPException(
+            detail={'message': 'Error! Missing Email or Password'}, 
+            status_code=400
+        )
+    
     try:
         user = firebase.create_firebase_user(
            email=email,
            password=password,
            display_name=display_name
         )
-
-        return JSONResponse(content={'message': f'Successfully created user: {user}'}, status_code=200)    
+        print(f"\n CREATED USER: {user}\n")
+        return user   
     except Exception as e:
-        return HTTPException(detail={'message': f"Error Creating User due to: {e}"}, status_code=400)
+        return HTTPException(
+            detail={'message': f"Error Creating User due to: {e}"}, 
+            status_code=400
+        )
  
 
 # login endpoint
-@auth_router.post("/login")
-async def login(request: Request):
-   req_json = await request.json()
-   email = req_json['email']
-   password = req_json['password']
-   try:
-       user = auth.pb.auth().sign_in_with_email_and_password(email, password)
-    
-       jwt = user['idToken']
-       return JSONResponse(content={'token': jwt}, status_code=200)
-   except:
-       return HTTPException(detail={'message': 'There was an error logging in'}, status_code=400)
+@auth_router.post("/login", response_model=output.LoginOutputModel)
+async def login(login_data: input.LoginInputModel):
+    email = login_data.email
+    password = login_data.password
+
+    try:
+        user = firebase.sign_in_user(email, password)
+        return user
+    except:
+        return HTTPException(
+            detail={'message': 'There was an error logging in'}, 
+            status_code=400
+        )
  
 
 # ping endpoint

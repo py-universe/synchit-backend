@@ -1,12 +1,12 @@
 from pydantic import BaseModel
 
 
-class BaseAuthInput(BaseModel):
+class BaseAuthInputModel(BaseModel):
     email: str
     password: str
 
 
-class SignupInput(BaseAuthInput):
+class SignupInputModel(BaseAuthInputModel):
     display_name: str
    
     class Config:
@@ -19,7 +19,7 @@ class SignupInput(BaseAuthInput):
         }
 
 
-class LoginInput(BaseAuthInput):
+class LoginInputModel(BaseAuthInputModel):
    
     class Config:
         schema_extra = {
