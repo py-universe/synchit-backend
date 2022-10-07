@@ -11,7 +11,7 @@ class SignupOutputModel(BaseAuthOutputModel):
     email_verified: bool
 
 
-class LoginOutputModel(BaseAuthOutputModel):
+class AuthOutputModel(BaseAuthOutputModel):
    access_token: str
    refresh_token: str
 

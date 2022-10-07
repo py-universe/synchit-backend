@@ -5,12 +5,11 @@ import uvicorn
 from .helpers import firebase
 from .schemas import input, output
 
-
 auth_router = APIRouter()
 
 
 # signup endpoint
-@auth_router.post("/signup", response_model=output.SignupOutputModel)
+@auth_router.post("/signup", response_model=output.AuthOutputModel)
 async def signup(signup_data: input.SignupInputModel):
     email = signup_data.email
     password = signup_data.password
@@ -29,7 +28,12 @@ async def signup(signup_data: input.SignupInputModel):
            display_name=display_name
         )
         print(f"\n CREATED USER: {user}\n")
-        return user   
+        
+        # If user has been created successfully, log them in
+        if user['email'] == email:
+            user = firebase.sign_in_user(email, password)
+            print(f"\n LOGGEDIN USER AFTER SIGNUP: {user}\n")
+            return user   
     except Exception as e:
         return HTTPException(
             detail={'message': f"Error Creating User due to: {e}"}, 
@@ -38,7 +42,7 @@ async def signup(signup_data: input.SignupInputModel):
  
 
 # login endpoint
-@auth_router.post("/login", response_model=output.LoginOutputModel)
+@auth_router.post("/login", response_model=output.AuthOutputModel)
 async def login(login_data: input.LoginInputModel):
     email = login_data.email
     password = login_data.password

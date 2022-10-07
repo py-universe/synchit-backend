@@ -19,9 +19,9 @@ def get_app() -> FastAPI:
     app = FastAPI(
         title="synchit_backend",
         description="backend for synchit, a group music listening application",
-        docs_url="/api/docs",
-        redoc_url="/api/redoc",
-        openapi_url="/api/openapi.json",
+        docs_url="/api/v1/docs",
+        redoc_url="/api/v1/redoc",
+        openapi_url="/api/v1/openapi.json",
         default_response_class=UJSONResponse,
     )
 
@@ -39,6 +39,6 @@ def get_app() -> FastAPI:
     register_shutdown_event(app)
 
     # Main router for the API.
-    app.include_router(router=api_router, prefix="/api")
+    app.include_router(router=api_router, prefix="/api/v1")
 
     return app

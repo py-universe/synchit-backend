@@ -18,6 +18,7 @@ def create_firebase_user(email: str, password: str, display_name: str):
         display_name=display_name
     )
 
+    print(f"\n USER: {user}")
     user = {
         'uid': user.uid,
         'email': user.email,
