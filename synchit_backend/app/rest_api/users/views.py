@@ -1,16 +1,23 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from fastapi.exceptions import HTTPException
 import uvicorn
 
+from sqlalchemy.orm import Session
+
 from .helpers import firebase
 from .schemas import input, output
+from synchit_backend.db.dependencies import get_db_session
+from .db_crud import create_user_profile
 
 auth_router = APIRouter()
 
 
 # signup endpoint
 @auth_router.post("/signup", response_model=output.AuthOutputModel)
-async def signup(signup_data: input.SignupInputModel):
+async def signup(
+    signup_data: input.SignupInputModel,
+    db: Session = Depends(get_db_session)
+):
     email = signup_data.email
     password = signup_data.password
     display_name = signup_data.display_name
@@ -30,6 +37,7 @@ async def signup(signup_data: input.SignupInputModel):
         
         # If user has been created successfully, log them in
         if user['email'] == email:
+            create_user_profile(db=db, user_id=user['uid'])
             user = firebase.sign_in_user(email, password)
             return user   
     except Exception as e:
