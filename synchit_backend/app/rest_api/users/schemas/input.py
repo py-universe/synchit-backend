@@ -28,3 +28,7 @@ class LoginInputModel(BaseAuthInputModel):
             }
         }
 
+
+class RefreshToken(BaseModel):
+    refresh_token: str
+

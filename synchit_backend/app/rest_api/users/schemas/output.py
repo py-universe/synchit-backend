@@ -16,3 +16,6 @@ class AuthOutputModel(BaseAuthOutputModel):
    refresh_token: str
 
 
+class RefreshToken(BaseModel):
+    access_token: str
+    refresh_token: str

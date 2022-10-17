@@ -27,12 +27,10 @@ async def signup(signup_data: input.SignupInputModel):
            password=password,
            display_name=display_name
         )
-        print(f"\n CREATED USER: {user}\n")
         
         # If user has been created successfully, log them in
         if user['email'] == email:
             user = firebase.sign_in_user(email, password)
-            print(f"\n LOGGEDIN USER AFTER SIGNUP: {user}\n")
             return user   
     except Exception as e:
         return HTTPException(
@@ -53,6 +51,21 @@ async def login(login_data: input.LoginInputModel):
     except:
         return HTTPException(
             detail={'message': 'There was an error logging in'}, 
+            status_code=400
+        )
+
+
+# login endpoint
+@auth_router.post("/refresh-token", response_model=output.RefreshToken)
+async def refresh(data: input.RefreshToken):
+    refresh_token = data.refresh_token
+
+    try:
+        user = firebase.refresh_token(refresh_token=refresh_token)
+        return user
+    except:
+        return HTTPException(
+            detail={'message': 'There was an error refreshing the token'}, 
             status_code=400
         )
  
